@@ -284,7 +284,7 @@ public:
             }
 
             if (abs(aug(maxRow + 1, i + 1)) < 1e-12)
-                throw runtime_error("\nError: Matrix is singular or near-singular.");
+                throw runtime_error("\nError: Matrix " + name + " is singular or near-singular.");
 
             if (i != maxRow) {
                 for (int j = 0; j < 2 * n; ++j)
@@ -314,7 +314,10 @@ public:
     friend ostream& operator<<(ostream& os, const Matrix& mat) {
         for (int i = 0; i < mat.mNumRows; i++) {
             for (int j = 0; j < mat.mNumCols; j++) {
-                os << mat.mData[i][j] << (j == mat.mNumCols - 1 ? "\n" : " ");
+                double val = mat.mData[i][j];
+                // Round very small values to zero
+                if (abs(val) < 1e-12) val = 0.0;
+                os << val << (j == mat.mNumCols - 1 ? "\n" : " ");
             }
         }
         return os;
@@ -332,31 +335,83 @@ Matrix operator*(const double& scalar, const Matrix& mat) {
 
 int main() {
     // debug = true;
+    
+    cout << "=== Matrix Class Tests ===" << endl;
 
-    cout << "=== Matrix Class Tests ===" << endl; 
+    // Create matrix T via manual input
+    NAMED_MATRIX(T, 3, 3);
+    T(1, 1) = 2; T(1, 2) = 1; T(1, 3) = 0;
+    T(2, 1) = 1; T(2, 2) = 2; T(2, 3) = 1;
+    T(3, 1) = 0; T(3, 2) = 1; T(3, 3) = 2;
 
-    NAMED_MATRIX(A, 3, 3);
-    A(1, 1) = 2; A(1, 2) = 1; A(1, 3) = 0;
-    A(2, 1) = 1; A(2, 2) = 2; A(2, 3) = 1;
-    A(3, 1) = 0; A(3, 2) = 1; A(3, 3) = 2;
+    cout << "\nMatrix T:\n" << T;
 
-    cout << "\nMatrix A:\n" << A;
-
-    DECLARE_MATRIX(V,
+    // Create matrix A via macro
+    DECLARE_MATRIX(A,
         {2, 1, 0},
         {1, 2, 1},
         {0, 1, 2}
     );
+    cout << "\nMatrix A:\n" << A;
 
-    cout << "\nMatrix V:\n" << V;
-
+    // Compute determinant
     double detA = A.det();
     cout << "\nDeterminant of A: " << detA << endl;
 
+    // Compute inverse
     Matrix B = A.inverse("B");
-    cout << "\nInverse of A:\n" << B;
+    cout << "\nInverse of A (Matrix B):\n" << B;
+
+    // Multiply A * B (should be close to identity)
+    Matrix I = A * B;
+    cout << "\nProduct A * B (should be identity):\n" << I;
+
+    // Create another matrix C
+    DECLARE_MATRIX(C,
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    );
+    cout << "\nMatrix C:\n" << C;
+
+    // Try matrix addition
+    try {
+        Matrix D = A + C;
+        cout << "\nMatrix D = A + C:\n" << D;
+    } catch (const exception& e) {
+        cout << e.what() << endl;
+    }
+
+    // Try matrix subtraction
+    try {
+        Matrix E = A - C;
+        cout << "\nMatrix E = A - C:\n" << E;
+    } catch (const exception& e) {
+        cout << e.what() << endl;
+    }
+
+    // Scalar multiplication
+    Matrix F = 2.5 * A;
+    cout << "\nMatrix F = 2.5 * A:\n" << F;
+
+    // Matrix multiplication (A * C)
+    try {
+        Matrix G = A * C;
+        cout << "\nMatrix G = A * C:\n" << G;
+    } catch (const exception& e) {
+        cout << e.what() << endl;
+    }
+
+    // Attempt invalid inverse
+    try {
+        cout << "\nAttempt invalid inverse:\n";
+        cout << "\nInverse of C:";
+        Matrix invC = C.inverse("invC");
+        cout << invC;
+    } catch (const exception& e) {
+        cout << e.what() << endl;
+    }
 
     cout << "\n=== Program ended. " << (debug ? "Destructors called" : "") << "===\n";
-
     return 0;
 }
