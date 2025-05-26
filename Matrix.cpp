@@ -43,6 +43,47 @@ public:
              << " (" << mNumRows << "x" << mNumCols << ")" << endl;
     }
 
+    // Constructor from initializer list (user-friendly)
+    Matrix(std::initializer_list<std::initializer_list<double>> initList) {
+        mNumRows = initList.size();
+        mNumCols = initList.begin()->size();
+
+        // Allocate memory
+        mData = new double*[mNumRows];
+        for (int i = 0; i < mNumRows; ++i) {
+            mData[i] = new double[mNumCols];
+        }
+
+        // Copy values
+        int row = 0;
+        for (const auto& rowList : initList) {
+            if (rowList.size() != static_cast<size_t>(mNumCols)) {
+                throw std::invalid_argument("All rows must have the same number of columns.");
+            }
+            int col = 0;
+            for (double val : rowList) {
+                mData[row][col++] = val;
+            }
+            ++row;
+        }
+
+        mName = "<unnamed>";
+        if (debug) std::cout << "Constructor: Matrix " << mName
+                << " (" << mNumRows << "x" << mNumCols << ")\n";
+    }
+    
+    Matrix(const std::string& name, std::initializer_list<std::initializer_list<double>> initList)
+    : mName(name), mNumRows(initList.size()), mNumCols(initList.begin()->size()) {
+        // Allocate and copy data
+        mData = new double*[mNumRows];
+        for (int i = 0; i < mNumRows; ++i) {
+            mData[i] = new double[mNumCols];
+            auto row = *(initList.begin() + i);
+            std::copy(row.begin(), row.end(), mData[i]);
+        }
+        if (debug) std::cout << "Constructor: Matrix " << mName << " (" << mNumRows << "x" << mNumCols << ")\n";
+    }
+
     // Copy constructor
     Matrix(const Matrix& other)
         : mNumRows(other.mNumRows), mNumCols(other.mNumCols),
@@ -282,6 +323,7 @@ public:
 
 // Macro for named matrix creation
 #define NAMED_MATRIX(var, rows, cols) Matrix var(rows, cols, #var)
+#define DECLARE_MATRIX(name, ...) Matrix name(#name, { __VA_ARGS__ })
 
 // Non-member scalar multiplication
 Matrix operator*(const double& scalar, const Matrix& mat) {
@@ -299,6 +341,14 @@ int main() {
     A(3, 1) = 0; A(3, 2) = 1; A(3, 3) = 2;
 
     cout << "\nMatrix A:\n" << A;
+
+    DECLARE_MATRIX(V,
+        {2, 1, 0},
+        {1, 2, 1},
+        {0, 1, 2}
+    );
+
+    cout << "\nMatrix V:\n" << V;
 
     double detA = A.det();
     cout << "\nDeterminant of A: " << detA << endl;
