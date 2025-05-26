@@ -22,11 +22,23 @@ public:
     // Destructor
     ~Vector();
 
+    // Export mSize
+    int size() const;
+
     // Addition
     Vector operator+(const Vector& other) const;
 
     // Subtraction
     Vector operator-(const Vector& other) const;
+
+    // Unary
+    Vector operator-() const;
+
+    // Assignment
+    Vector operator=(const Vector& other);
+
+    // Vector multiplication
+    double operator*(const Vector& other) const;
 
     // Scalar multiplication
     Vector operator*(double scalar) const;
@@ -40,5 +52,8 @@ public:
     // Cout vector
     friend ostream& operator<<(ostream& os, const Vector& v);
 };
+
+// Scalar multiplication (scalar * Vector) - non-member function
+Vector operator*(double scalar, const Vector& vec);
 
 #endif // VECTOR_HPP
