@@ -1,300 +1,312 @@
 #include <iostream>
+#include <string>
 #include <cmath>
-#include "Vector\Vector.hpp"
+#include <stdexcept>
 using namespace std;
 
+static bool debug = false;
+
+struct DebugScope {
+    string name;
+    DebugScope(const string& n) : name(n) {
+        if (debug) cout << "\n[ Entering scope: " << name << endl;
+    }
+    ~DebugScope() {
+        if (debug) cout << "Exiting scope: " << name << " ]" << endl;
+    }
+};
+
 class Matrix {
-    private:
-        int mNumRows;
-        int mNumCols;
-        double** mData;
-    public:
-        // Default constructor
-        Matrix() : mData(nullptr), mNumRows(0), mNumCols(0) {}
-        
-        // Copy constructor with deep copy
-        Matrix(const Matrix& other) : mNumRows(other.mNumRows), mNumCols(other.mNumCols) {
-            this->mData = new double*[mNumRows];
-            for (int i = 0; i < this->mNumRows; i++) {
-                this->mData[i] = new double[mNumCols];
-                for (int j = 0; j < this->mNumCols; j++) {
-                    this->mData[i][j] = other.mData[i][j];
+private:
+    int mNumRows;
+    int mNumCols;
+    double** mData;
+    string mName;
+
+public:
+
+    // Constructor with optional debug name
+    Matrix(int row = 0, int col = 0, const string& name = "")
+        : mNumRows(row), mNumCols(col), mName(name) {
+        if (mNumRows > 0 && mNumCols > 0) {
+            mData = new double*[mNumRows];
+            for (int i = 0; i < mNumRows; i++) {
+                mData[i] = new double[mNumCols];
+                for (int j = 0; j < mNumCols; j++) {
+                    mData[i][j] = 0;
                 }
             }
+        } else {
+            mData = nullptr;
         }
+        if (debug) cout << "Constructor: Matrix " << (mName.empty() ? "<unnamed>" : mName)
+             << " (" << mNumRows << "x" << mNumCols << ")" << endl;
+    }
 
-        // Input constructor that accept mNumRows and mNumCols
-        Matrix(int row, int col) : mNumRows(row), mNumCols(col) {
-            this->mData = new double*[mNumRows];
-            for (int i = 0; i < this->mNumRows; i++) {
-                this->mData[i] = new double[mNumCols];
-                for (int j = 0; j < this->mNumCols; j++) {
-                    this->mData[i][j] = 0; // Create row.col "zero" matrix
+    // Copy constructor
+    Matrix(const Matrix& other)
+        : mNumRows(other.mNumRows), mNumCols(other.mNumCols),
+          mName(other.mName.empty() ? "" : other.mName + "_copy") {
+        if (mNumRows > 0 && mNumCols > 0) {
+            mData = new double*[mNumRows];
+            for (int i = 0; i < mNumRows; i++) {
+                mData[i] = new double[mNumCols];
+                for (int j = 0; j < mNumCols; j++) {
+                    mData[i][j] = other.mData[i][j];
                 }
             }
+        } else {
+            mData = nullptr;
         }
+        if (debug) cout << "Copy Constructor: Matrix " << (mName.empty() ? "<unnamed>" : mName) << endl;
+    }
 
-        // Default constructor
-        ~Matrix() {
-            cout << "\n>> Destructor: The called matrix which has the (0,0) is " << mData[0][0] << " has been deleted" << endl;
+    // Move constructor
+    Matrix(Matrix&& other) noexcept
+    : mNumRows(other.mNumRows), mNumCols(other.mNumCols),
+        mData(other.mData), mName(std::move(other.mName)) {
+        other.mData = nullptr;
+        other.mNumRows = 0;
+        other.mNumCols = 0;
+        if (debug) std::cout << "Move Constructor: Matrix " << (mName.empty() ? "<unnamed>" : mName) << " has been moved\n";
+    }
+
+    Matrix& operator=(Matrix&& other) noexcept {
+        if (this != &other) {
+            // Free old memory
+            for (int i = 0; i < mNumRows; ++i)
+                delete[] mData[i];
+            delete[] mData;
+
+            // Transfer ownership
+            mData = other.mData;
+            mNumRows = other.mNumRows;
+            mNumCols = other.mNumCols;
+
+            // Nullify source
+            other.mData = nullptr;
+            other.mNumRows = 0;
+            other.mNumCols = 0;
+        }
+        return *this;
+    }
+
+    // Destructor
+    ~Matrix() {
+        if (debug) cout << "Destructor: Matrix " << (mName.empty() ? "<unnamed>" : mName) << " has been deleted" << endl;
+        if (mData) {
             for (int i = 0; i < mNumRows; i++) {
                 delete[] mData[i];
             }
             delete[] mData;
         }
+    }
 
-        // Accessing element (1 based) that allows modification
-        double& operator()(const int& row, const int& col) {
-            if (row < 1 || row > this->mNumRows || col < 1 || col > this->mNumCols) {
-                throw out_of_range("Error: The matrix index (" + to_string(row) + ", " + to_string(col) + ") is out of range.");
-            }
-            return this->mData[row-1][col-1];
+    // Access element (1-based) - mutable
+    double& operator()(const int& row, const int& col) {
+        if (row < 1 || row > mNumRows || col < 1 || col > mNumCols) {
+            throw out_of_range("\nError: The matrix index (" + to_string(row) + ", " + to_string(col) + ") is out of range.");
         }
-        
-        // Accessing element (1 based) that does not allow modification
-        const double operator()(const int& row, const int& col) const {
-            if (row < 1 || row > this->mNumRows || col < 1 || col > this->mNumCols) {
-                throw out_of_range("Error: The matrix index (" + to_string(row) + ", " + to_string(col) + ") is out of range.");
-            }
-            return this->mData[row-1][col-1];
+        return mData[row - 1][col - 1];
+    }
+
+    // Access element (1-based) - const
+    const double operator()(const int& row, const int& col) const {
+        if (row < 1 || row > mNumRows || col < 1 || col > mNumCols) {
+            throw out_of_range("\nError: The matrix index (" + to_string(row) + ", " + to_string(col) + ") is out of range.");
         }
+        return mData[row - 1][col - 1];
+    }
 
-        // Accessing the number of rows and columns
-        const int rows() const {
-            return this->mNumRows;
+    const int rows() const { return mNumRows; }
+    const int cols() const { return mNumCols; }
+    const pair<int, int> shape() const { return {mNumRows, mNumCols}; }
+    
+
+    // WARNING: Since C++17 has RVO and NRVO function, don't need to add debug scope for +, -, *
+    // Addition
+    Matrix operator+(const Matrix& other) const {
+        if (shape() != other.shape()) {
+            throw runtime_error("\nError: Cannot add matrices that have different sizes.\n");
         }
+        Matrix new_Matrix(mNumRows, mNumCols);
+        for (int i = 0; i < mNumRows; i++)
+            for (int j = 0; j < mNumCols; j++)
+                new_Matrix.mData[i][j] = mData[i][j] + other.mData[i][j];
+        return new_Matrix;
+    }
 
-        const int cols() const {
-            return this->mNumCols;
+    // Subtraction
+    Matrix operator-(const Matrix& other) const {
+        if (shape() != other.shape()) {
+            throw runtime_error("\nError: Cannot subtract matrices that have different sizes.\n");
         }
+        Matrix new_Matrix(mNumRows, mNumCols);
+        for (int i = 0; i < mNumRows; i++)
+            for (int j = 0; j < mNumCols; j++)
+                new_Matrix.mData[i][j] = mData[i][j] - other.mData[i][j];
+        return new_Matrix;
+    }
 
-        const std::pair<int, int> shape() const {
-            return {mNumRows, mNumCols};
+    // Scalar multiplication
+    Matrix operator*(const double& scalar) const {
+        Matrix new_Matrix(mNumRows, mNumCols);
+        for (int i = 0; i < mNumRows; i++)
+            for (int j = 0; j < mNumCols; j++)
+                new_Matrix.mData[i][j] = mData[i][j] * scalar;
+        return new_Matrix;
+    }
+
+    // Matrix multiplication
+    Matrix operator*(const Matrix& other) {
+        if (mNumCols != other.mNumRows) {
+            throw runtime_error("\nError: Cannot multiply matrices that do not have suitable sizes.\n");
         }
-
-        // Addition
-        Matrix operator+(const Matrix& other) const {
-            if (this->shape() != other.shape()) {
-                throw runtime_error("Error: Cannot add matrices that have different sizes.\n");
-            }
-            else {
-                Matrix new_Matrix(mNumRows, mNumCols);  // Create row.col "zero" matrix
-                for (int i = 0; i < this->mNumRows; i++) {
-                    for (int j = 0; j < this->mNumCols; j++) {
-                        new_Matrix.mData[i][j] = this->mData[i][j] + other.mData[i][j];
-                    }
-                }
-                return new_Matrix;
-            }
-        }
-
-        // Subtracion
-        Matrix operator-(const Matrix& other) const {
-            if (this->shape() != other.shape()) {
-                throw runtime_error("Error: Cannot subtract matrices that have different sizes.\n");
-            }
-            else {
-                Matrix new_Matrix(mNumRows, mNumCols);  // Create row.col "zero" matrix
-                for (int i = 0; i < this->mNumRows; i++) {
-                    for (int j = 0; j < this->mNumCols; j++) {
-                        new_Matrix.mData[i][j] = this->mData[i][j] - other.mData[i][j];
-                    }
-                }
-                return new_Matrix;
-            }
-        }
-
-        // Scalar multiplication
-        Matrix operator*(const double& scalar) const {
-            Matrix new_Matrix(mNumRows, mNumCols);  // Create row.col "zero" matrix
-            for (int i = 0; i < this->mNumRows; i++) {
-                for (int j = 0; j < this->mNumCols; j++) {
-                    new_Matrix.mData[i][j] = this->mData[i][j]*scalar;
-                }
-            }
-            return new_Matrix;
-        }
-
-        // Matrix multiplication
-        Matrix operator*(const Matrix& other) {
-            if (this->mNumCols != other.mNumRows) {
-                throw runtime_error("Error: Cannot multiply matrices that do not have suitable sizes.\n");
-            } else {
-                Matrix new_Matrix(this->mNumRows, other.mNumCols);  // (m × p) matrix
-                for (int i = 0; i < this->mNumRows; i++) {
-                    for (int j = 0; j < other.mNumCols; j++) {
-                        for (int k = 0; k < this->mNumCols; k++) {
-                            new_Matrix.mData[i][j] += this->mData[i][k] * other.mData[k][j];
-                        }
-                    }
-                }
-                return new_Matrix;
-            }
-        }
-
-        // Matrix-Vector multiplication
-        Matrix operator*(const Vector& vec) {
-            if (this->mNumCols != vec.size()) {
-                throw runtime_error("Error: Cannot multiply vector that does not have a suitable size.\n");
-            } else {
-                Matrix new_Matrix(this->mNumRows, 1);  // (m × p) matrix
-                for (int i = 0; i < this->mNumRows; i++) {
-                    for (int j = 0; j < vec.size(); j++) {
-                        new_Matrix.mData[i][0] += this->mData[i][j] * vec(j + 1); // vec is 1-based index
-                    }
-                }
-                return new_Matrix;
-            }
-        }
-
-        // Determinant of a given square matrix using LU Decomposition
-        const double det(Matrix mat) const {
-            if (mat.mNumRows != mat.mNumCols) {
-                throw runtime_error("Error: Cannot calculate the determinant of a non-given square matrix.");
-            }
-
-            int n = mat.mNumCols; // Matrix n*n
-
-            // Lu Decomposition - L calculation
-            for (int j = 0; j < n; j++) {
-                if (abs(mat(j + 1, j + 1)) < 1e-10) {
-                    throw runtime_error("Error: Zero pivot encountered during LU decomposition.");
-                }
-                for (int i = j + 1; i < n; i++) {
-                    double x = mat(i + 1, j + 1) / mat(j + 1, j + 1);
-                    for (int k = 0; k < n; k++) {
-                        mat(i + 1, k + 1) -= x * mat(j + 1, k + 1);
-                    }
+        Matrix new_Matrix(mNumRows, other.mNumCols);
+        for (int i = 0; i < mNumRows; i++) {
+            for (int j = 0; j < other.mNumCols; j++) {
+                new_Matrix.mData[i][j] = 0;
+                for (int k = 0; k < mNumCols; k++) {
+                    new_Matrix.mData[i][j] += mData[i][k] * other.mData[k][j];
                 }
             }
+        }
+        return new_Matrix;
+    }
 
-            double determinant = 1.0;
-            for (int j = 0; j < n; j++) {
-                determinant *= mat(j + 1, j + 1);
-            }
+    // Determinant
+    const double det() const {
+        DebugScope scope((mName.empty() ? "Matrix::det" : mName + "::det"));
 
-            return determinant;
+        Matrix mat = (*this);
+        if (mat.mNumRows != mat.mNumCols) {
+            throw runtime_error("\nError: Cannot calculate the determinant of a non-square matrix.");
         }
 
-        // Inverse Matrix
-        Matrix inverse(const Matrix& mat) const {
-            int n = mat.rows();
-            if (n != mat.cols()) {
-                throw runtime_error("Error: Only square matrices can be inverted.");
-            }
+        int n = mat.mNumCols;
 
-            if (n == 2) {
-                double d = mat(1,1)*mat(2,2) - mat(1,2)*mat(2,1);
-                if (d == 0) {
-                    throw runtime_error("Error: Determinant is zero. Matrix is not invertible.");
+        for (int j = 0; j < n; j++) {
+            if (abs(mat(j + 1, j + 1)) < 1e-10) {
+                throw runtime_error("\nError: Zero pivot encountered during LU decomposition.");
+            }
+            for (int i = j + 1; i < n; i++) {
+                double x = mat(i + 1, j + 1) / mat(j + 1, j + 1);
+                for (int k = 0; k < n; k++) {
+                    mat(i + 1, k + 1) -= x * mat(j + 1, k + 1);
                 }
-                Matrix inv(2, 2);
-                inv(1, 1) =  mat(2, 2) / d;
-                inv(1, 2) = -mat(1, 2) / d;
-                inv(2, 1) = -mat(2, 1) / d;
-                inv(2, 2) =  mat(1, 1) / d;
-                return inv;
+            }
+        }
+
+        double determinant = 1.0;
+        for (int j = 0; j < n; j++) {
+            determinant *= mat(j + 1, j + 1);
+        }
+        return determinant;
+    }
+
+    // Inverse
+    Matrix inverse(const string& name = "") const {
+        DebugScope scope((mName.empty() ? "Matrix::inverse" : mName + "::inverse"));
+
+        if (mNumRows != mNumCols) {
+            throw runtime_error("\nError: Only square matrices can be inverted.");
+        }
+
+        int n = mNumRows;
+        if (n == 2) {
+            double d = (*this)(1, 1) * (*this)(2, 2) - (*this)(1, 2) * (*this)(2, 1);
+            if (abs(d) < 1e-12) {
+                throw runtime_error("\nError: Determinant is zero. Matrix is not invertible.");
+            }
+            Matrix inv(2, 2, "inv");
+            inv(1, 1) = (*this)(2, 2) / d;
+            inv(1, 2) = -(*this)(1, 2) / d;
+            inv(2, 1) = -(*this)(2, 1) / d;
+            inv(2, 2) = (*this)(1, 1) / d;
+            return inv;
+        }
+
+        Matrix aug(n, 2 * n, "aug");
+        // Augment [A | I]
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j)
+                aug(i + 1, j + 1) = (*this)(i + 1, j + 1);
+            aug(i + 1, n + i + 1) = 1.0;
+        }
+
+        // Gauss-Jordan elimination
+        for (int i = 0; i < n; ++i) {
+            int maxRow = i;
+            for (int k = i + 1; k < n; ++k) {
+                if (abs(aug(k + 1, i + 1)) > abs(aug(maxRow + 1, i + 1)))
+                    maxRow = k;
             }
 
-            if (det(mat) == 0) {
-                throw std::runtime_error("Error: Matrix is not invertible. Determinant is zero.");
-            }
+            if (abs(aug(maxRow + 1, i + 1)) < 1e-12)
+                throw runtime_error("\nError: Matrix is singular or near-singular.");
 
-            // Augment [A | I]
-            Matrix aug(n, 2 * n);
-            for (int i = 0; i < n; ++i) {
-                for (int j = 0; j < n; ++j)
-                    aug(i, j) = mat(i, j);
-                aug(i, n + i) = 1.0;
-            }
-
-            // Gauss-Jordan Elimination
-            for (int i = 0; i < n; ++i) {
-                double diag = aug(i, i);
-                if (std::abs(diag) < 1e-12)
-                    throw std::runtime_error("Error: Singular matrix encountered during inversion.");
-
-                // Normalize the pivot row
+            if (i != maxRow) {
                 for (int j = 0; j < 2 * n; ++j)
-                    aug(i, j) /= diag;
-
-                // Eliminate other rows
-                for (int k = 0; k < n; ++k) {
-                    if (k == i) continue;
-                    double factor = aug(k, i);
-                    for (int j = 0; j < 2 * n; ++j)
-                        aug(k, j) -= factor * aug(i, j);
-                }
+                    swap(aug(i + 1, j + 1), aug(maxRow + 1, j + 1));
             }
 
-            // Extract right half as inverse
-            Matrix result(n, n);
-            for (int i = 0; i < n; ++i)
-                for (int j = 0; j < n; ++j)
-                    result(i, j) = aug(i, j + n);
+            double diag = aug(i + 1, i + 1);
+            for (int j = 0; j < 2 * n; ++j)
+                aug(i + 1, j + 1) /= diag;
 
-            return result;
-        }
-
-        // Matrix printing out
-        friend std::ostream& operator<<(std::ostream& os, const Matrix& mat) {
-            // cout << "[";
-            for (int i = 0; i < mat.mNumRows; i++) {
-                for (int j = 0; j < mat.mNumCols-1; j++) {
-                    os << mat.mData[i][j] << " "; // Create row.col "zero" matrix
-                }
-                os << mat.mData[i][mat.mNumCols-1] << endl;
+            for (int k = 0; k < n; ++k) {
+                if (k == i) continue;
+                double factor = aug(k + 1, i + 1);
+                for (int j = 0; j < 2 * n; ++j)
+                    aug(k + 1, j + 1) -= factor * aug(i + 1, j + 1);
             }
-            // #cout << m.mData[m.mNumRows-1][m.mNumCols-1];
-            return os;
         }
+
+        Matrix result(n, n, name);
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j)
+                result(i + 1, j + 1) = aug(i + 1, j + n + 1);
+
+        return std::move(result);
+    }
+
+    friend ostream& operator<<(ostream& os, const Matrix& mat) {
+        for (int i = 0; i < mat.mNumRows; i++) {
+            for (int j = 0; j < mat.mNumCols; j++) {
+                os << mat.mData[i][j] << (j == mat.mNumCols - 1 ? "\n" : " ");
+            }
+        }
+        return os;
+    }
 };
 
-// Printing out mat.shape()
-template<typename T1, typename T2>
-std::ostream& operator<<(std::ostream& os, const std::pair<T1, T2>& p) {
-    os << "{" << p.first << ", " << p.second << "}";
-    return os;
-}
+// Macro for named matrix creation
+#define NAMED_MATRIX(var, rows, cols) Matrix var(rows, cols, #var)
 
-// Scalar multiplication (scalar * Matrix) - non-member function
+// Non-member scalar multiplication
 Matrix operator*(const double& scalar, const Matrix& mat) {
     return mat * scalar;
 }
 
 int main() {
-    cout << "=== Matrix Class Tests ===" << endl;
+    // debug = true;
 
-    // Create two 2x2 matrices
-    Matrix A(2, 2);
-    A(1, 1) = 1; A(1, 2) = 2;
-    A(2, 1) = 3; A(2, 2) = 4;
+    cout << "=== Matrix Class Tests ===" << endl; 
 
-    Matrix B(2, 2);
-    B(1, 1) = 5; B(1, 2) = 6;
-    B(2, 1) = 7; B(2, 2) = 8;
+    NAMED_MATRIX(A, 3, 3);
+    A(1, 1) = 2; A(1, 2) = 1; A(1, 3) = 0;
+    A(2, 1) = 1; A(2, 2) = 2; A(2, 3) = 1;
+    A(3, 1) = 0; A(3, 2) = 1; A(3, 3) = 2;
 
-    // Display matrices
     cout << "\nMatrix A:\n" << A;
-    cout << "\nMatrix B:\n" << B;
 
-    // Addition
-    Matrix C = A + B;
-    cout << "\nC = A + B:\n" << C;
+    double detA = A.det();
+    cout << "\nDeterminant of A: " << detA << endl;
 
-    // // Subtraction
-    Matrix D = A - B;
-    cout << "\nD = A - B:\n" << D;
+    Matrix B = A.inverse("B");
+    cout << "\nInverse of A:\n" << B;
 
-    // // Scalar multiplication
-    Matrix E = A * 2.0;
-    cout << "\nE = A * 2.0:\n" << E;
-
-    // // Matrix multiplication
-    Matrix F = A * B;
-    cout << "\nF = A * B:\n" << F;
-
-    cout << "\n=== Program ended ===\n";
+    cout << "\n=== Program ended. " << (debug ? "Destructors called" : "") << "===\n";
 
     return 0;
 }
