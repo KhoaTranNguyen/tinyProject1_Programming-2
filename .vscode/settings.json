@@ -3,6 +3,9 @@
         "iostream": "cpp",
         "initializer_list": "cpp",
         "new": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "ostream": "cpp"
     }
 }

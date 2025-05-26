@@ -36,7 +36,7 @@ class Matrix {
 
         // Default constructor
         ~Matrix() {
-            cout << "\n>> Destructor: The called matrix of size " << mNumRows << "x" << mNumCols << " has been deleted" << endl;
+            cout << "\n>> Destructor: The called matrix which has the (0,0) is " << mData[0][0] << " has been deleted" << endl;
             for (int i = 0; i < mNumRows; i++) {
                 delete[] mData[i];
             }
@@ -132,7 +132,7 @@ class Matrix {
             }
         }
 
-        // Vector multiplication
+        // Matrix-Vector multiplication
         Matrix operator*(const Vector& vec) {
             if (this->mNumCols != vec.size()) {
                 throw runtime_error("Error: Cannot multiply vector that does not have a suitable size.\n");
@@ -147,7 +147,7 @@ class Matrix {
             }
         }
 
-        // Determinant of a given square matrix
+        // Determinant of a given square matrix using LU Decomposition
         const double det(Matrix mat) const {
             if (mat.mNumRows != mat.mNumCols) {
                 throw runtime_error("Error: Cannot calculate the determinant of a non-given square matrix.");
@@ -167,7 +167,8 @@ class Matrix {
                     }
                 }
             }
-            double determinant = 1;
+
+            double determinant = 1.0;
             for (int j = 0; j < n; j++) {
                 determinant *= mat(j + 1, j + 1);
             }
@@ -175,11 +176,64 @@ class Matrix {
             return determinant;
         }
 
-        // Inverse matrix
-        Matrix inverse() const {
-            if (det((*this)) == 0) {
-                throw runtime_error("Error: The matrix is not invertible.");
+        // Inverse Matrix
+        Matrix inverse(const Matrix& mat) const {
+            int n = mat.rows();
+            if (n != mat.cols()) {
+                throw runtime_error("Error: Only square matrices can be inverted.");
             }
+
+            if (n == 2) {
+                double d = mat(1,1)*mat(2,2) - mat(1,2)*mat(2,1);
+                if (d == 0) {
+                    throw runtime_error("Error: Determinant is zero. Matrix is not invertible.");
+                }
+                Matrix inv(2, 2);
+                inv(1, 1) =  mat(2, 2) / d;
+                inv(1, 2) = -mat(1, 2) / d;
+                inv(2, 1) = -mat(2, 1) / d;
+                inv(2, 2) =  mat(1, 1) / d;
+                return inv;
+            }
+
+            if (det(mat) == 0) {
+                throw std::runtime_error("Error: Matrix is not invertible. Determinant is zero.");
+            }
+
+            // Augment [A | I]
+            Matrix aug(n, 2 * n);
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j)
+                    aug(i, j) = mat(i, j);
+                aug(i, n + i) = 1.0;
+            }
+
+            // Gauss-Jordan Elimination
+            for (int i = 0; i < n; ++i) {
+                double diag = aug(i, i);
+                if (std::abs(diag) < 1e-12)
+                    throw std::runtime_error("Error: Singular matrix encountered during inversion.");
+
+                // Normalize the pivot row
+                for (int j = 0; j < 2 * n; ++j)
+                    aug(i, j) /= diag;
+
+                // Eliminate other rows
+                for (int k = 0; k < n; ++k) {
+                    if (k == i) continue;
+                    double factor = aug(k, i);
+                    for (int j = 0; j < 2 * n; ++j)
+                        aug(k, j) -= factor * aug(i, j);
+                }
+            }
+
+            // Extract right half as inverse
+            Matrix result(n, n);
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < n; ++j)
+                    result(i, j) = aug(i, j + n);
+
+            return result;
         }
 
         // Matrix printing out
@@ -209,16 +263,38 @@ Matrix operator*(const double& scalar, const Matrix& mat) {
 }
 
 int main() {
-    cout << "Creating Matrix A (2x3):" << endl;
-    Matrix A(2, 3);
-    cout << "Matrix A:\n" << A;
+    cout << "=== Matrix Class Tests ===" << endl;
 
-    cout << "\nCreating Matrix B as a copy of A:" << endl;
-    Matrix B(A);
-    cout << "Matrix B:\n" << B;
+    // Create two 2x2 matrices
+    Matrix A(2, 2);
+    A(1, 1) = 1; A(1, 2) = 2;
+    A(2, 1) = 3; A(2, 2) = 4;
 
-    cout << B.shape();
-    
-    cout << "\nExiting main, destructors will be called:" << endl;
+    Matrix B(2, 2);
+    B(1, 1) = 5; B(1, 2) = 6;
+    B(2, 1) = 7; B(2, 2) = 8;
+
+    // Display matrices
+    cout << "\nMatrix A:\n" << A;
+    cout << "\nMatrix B:\n" << B;
+
+    // Addition
+    Matrix C = A + B;
+    cout << "\nC = A + B:\n" << C;
+
+    // // Subtraction
+    Matrix D = A - B;
+    cout << "\nD = A - B:\n" << D;
+
+    // // Scalar multiplication
+    Matrix E = A * 2.0;
+    cout << "\nE = A * 2.0:\n" << E;
+
+    // // Matrix multiplication
+    Matrix F = A * B;
+    cout << "\nF = A * B:\n" << F;
+
+    cout << "\n=== Program ended ===\n";
+
     return 0;
 }

@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++17
 
 # Target executable
 TARGET = main
@@ -8,11 +8,11 @@ TARGET = main
 # Source files
 SRCS = main.cpp Vector.cpp
 
-# Header files
+# Header files (not strictly necessary here, but good practice)
 HDRS = Vector.hpp
 
 # Build target
-$(TARGET): $(SRCS) $(HDRS)
+$(TARGET): $(SRCS)
 	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET)
 
 # Run target
