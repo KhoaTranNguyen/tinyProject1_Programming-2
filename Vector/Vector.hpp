@@ -19,6 +19,9 @@ public:
     // Constructor with deep copy
     Vector(int s, const double* a);
 
+    // Copy constructor
+    Vector(const Vector& other);
+
     // Destructor
     ~Vector();
 
@@ -35,7 +38,7 @@ public:
     Vector operator-() const;
 
     // Assignment
-    Vector operator=(const Vector& other);
+    Vector& operator=(const Vector& other);
 
     // Vector multiplication
     double operator*(const Vector& other) const;

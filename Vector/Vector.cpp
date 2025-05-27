@@ -22,6 +22,13 @@ Vector::Vector(int s, const double* a) : mSize(s) {
     for (int i = 0; i < mSize; ++i) mData[i] = a[i];
 }
 
+// Copy constructor
+Vector::Vector(const Vector& other) {
+    mSize = other.mSize;
+    mData = new double[other.mSize];
+    for (int i = 0; i < mSize; ++i) mData[i] = other.mData[i];
+}
+
 // Destructor
 Vector::~Vector() {
     cout << "\n>> Destructor: The called vector of size " << this->mSize << " has been deleted" << endl;
@@ -61,8 +68,9 @@ Vector Vector::operator-() const {
 }
 
 // Assignment
-Vector Vector::operator=(const Vector& other) {
+Vector& Vector::operator=(const Vector& other) {
     if (this != &other) {
+        delete[] mData; // Free old memory
         this->mSize = other.mSize;
         this->mData = new double[mSize];
         for (int i = 0; i < mSize; i++) {
