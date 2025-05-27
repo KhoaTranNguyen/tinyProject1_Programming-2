@@ -2,10 +2,11 @@
 #include <cstdlib>        // For exit()
 #include <initializer_list>
 #include "Vector.hpp"
+#include "../Matrix/Matrix.hpp"
 using namespace std;
 
 // Default constructor
-Vector::Vector() : mData(nullptr), mSize(0) {}
+Vector::Vector() : mSize(0), mData(nullptr) {}
 
 // Constructor from initializer list (user-friendly)
 Vector::Vector(initializer_list<double> list) : mSize(list.size()) {
@@ -22,6 +23,12 @@ Vector::Vector(int s, const double* a) : mSize(s) {
     for (int i = 0; i < mSize; ++i) mData[i] = a[i];
 }
 
+// Number-constructor using size (code only)
+Vector::Vector(int s, const double a) : mSize(s) {
+    mData = new double[mSize];
+    for (int i = 0; i < mSize; ++i) mData[i] = a;
+}
+
 // Copy constructor
 Vector::Vector(const Vector& other) {
     mSize = other.mSize;
@@ -29,9 +36,17 @@ Vector::Vector(const Vector& other) {
     for (int i = 0; i < mSize; ++i) mData[i] = other.mData[i];
 }
 
+// Move constructor
+Vector::Vector(Vector&& other) noexcept
+    : mSize(other.mSize), mData(other.mData) {
+    other.mData = nullptr;
+    other.mSize = 0;
+    //if (debug) std::cout << ">> Move Constructor: Vector has been moved\n";
+}
+
 // Destructor
 Vector::~Vector() {
-    cout << "\n>> Destructor: The called vector of size " << this->mSize << " has been deleted" << endl;
+    if (debug) cout << "\n>> Destructor: The called vector of size " << this->mSize << " has been deleted" << endl;
     delete[] mData;
 }
 
@@ -105,7 +120,7 @@ Vector operator*(double scalar, const Vector& vec) {
 }
 
 // Valid index checking (1 based)
-const bool Vector::operator[](int index) const {
+bool Vector::operator[](int index) const {
     if (index < 1 || index > mSize) {
         return false;
     }
@@ -113,7 +128,7 @@ const bool Vector::operator[](int index) const {
 }
 
 // Valid index accessing (1 based)
-const double& Vector::operator()(int index) const {
+double& Vector::operator()(int index) const {
     if ((*this)[index]) {
         return mData[index - 1];
     }
@@ -125,6 +140,6 @@ ostream& operator<<(ostream& os, const Vector& vec) {
     cout << "(";
     for (int i = 0; i < vec.mSize - 1; ++i)
         cout << vec.mData[i] << ", ";
-    cout << vec.mData[vec.mSize - 1] << ")";
+    cout << vec.mData[vec.mSize - 1] << ")" << endl;
     return os;
 }

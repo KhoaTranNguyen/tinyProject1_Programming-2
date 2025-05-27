@@ -6,8 +6,8 @@ using namespace std;
 
 class Vector {
 private:
-    double* mData;
     int mSize;
+    double* mData;  
 
 public:
     // Default constructor
@@ -21,6 +21,12 @@ public:
 
     // Copy constructor
     Vector(const Vector& other);
+
+    // Move constructor
+    Vector(Vector&& other) noexcept;
+
+    // Number-constructor
+    Vector(int s, const double a);
 
     // Destructor
     ~Vector();
@@ -47,10 +53,10 @@ public:
     Vector operator*(double scalar) const;
 
     // Bounds-check operator (1-based index)
-    const bool operator[](int index) const;
+    bool operator[](int index) const;
 
     // Access operator (1-based index)
-    const double& operator()(int index) const;
+    double& operator()(int index) const;
 
     // Cout vector
     friend ostream& operator<<(ostream& os, const Vector& v);

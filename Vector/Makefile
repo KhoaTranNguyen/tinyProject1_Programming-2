@@ -3,10 +3,10 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++17
 
 # Target executable
-TARGET = main
+TARGET = test
 
 # Source files
-SRCS = main.cpp Vector.cpp
+SRCS = test.cpp Vector.cpp
 
 # Header files (not strictly necessary here, but good practice)
 HDRS = Vector.hpp

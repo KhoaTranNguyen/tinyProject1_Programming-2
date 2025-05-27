@@ -3,6 +3,7 @@
 using namespace std;
 
 int main() {
+
     cout << "Creating vector v1:" << endl;
     Vector v1 = {1, 2, 3};  // User input: 1 2 3
     try {
