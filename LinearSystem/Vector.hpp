@@ -146,9 +146,15 @@ public:
     }
 
     // Access operator (1-based index)
-    double& operator()(int index) const {
+    double& operator()(int index) {
         if ((*this)[index]) return mData[index - 1];
-        throw out_of_range("\n>> Error: Index " + to_string(index) + " out of bounds (1-based).");
+        throw out_of_range("\n>> Error: Index " + to_string(index) + " is out of bounds (1-based).");
+    }
+
+    // Access operator (1-based index) - immutable
+    const double& operator()(int index) const {
+        if ((*this)[index]) return mData[index - 1];
+        throw out_of_range("\n>> Error: Index " + to_string(index) + " is out of bounds (1-based).");
     }
 
     // Cout vector
