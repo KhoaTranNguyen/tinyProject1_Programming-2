@@ -154,8 +154,8 @@ int main() {
     Matrix A = toMatrix(trainFeatures);
     Vector b = toVector(trainTargets);
 
-    double lambda;
-    cout << "Input lambda: "; cin >> lambda;
+    double lambda = 0.1;
+    // cout << "Input lambda: "; cin >> lambda;
     LeastSquaresSystem lss(&A, &b, lambda); // lambda = 0.1 for ridge regularization
     Vector x = lss.solve();
 
