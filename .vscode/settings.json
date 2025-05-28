@@ -59,6 +59,7 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "list": "cpp",
-        "iterativelinearsolvers": "cpp"
+        "iterativelinearsolvers": "cpp",
+        "fstream": "cpp"
     }
 }

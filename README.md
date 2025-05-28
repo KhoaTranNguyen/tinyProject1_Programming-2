@@ -447,25 +447,27 @@ adviser,32/60,125,256,6000,256,16,128,198
 
 #### RMSE vs Regularization (λ)
 
+> Below statistic is calculated after setting a fixed random seed into `mt19937 g(rd)`.
+
 <div align="center">
 
 | λ Value |  RMSE |
 | ------: | ----: |
-|    0.01 | 28.93 |
-|     0.1 | 28.96 |
-|     1.0 | 29.37 |
-|    10.0 | 35.29 |
-|   100.0 | 80.29 |
+|    0.01 | 44.208 |
+|     0.1 | 44.208 |
+|     1.0 | 44.2073 |
+|    10.0 | 44.2003 |
+|   100.0 | 44.1314 |
 
 </div>
 
-* Lower RMSE indicates better generalization.
-* Very high λ over-regularizes the model, leading to poor fit.
+* In our case, **RMSE barely changes across a wide range of λ values**. This weak sensitivity of RMSE to λ suggests **the model is not overfitting in the first place**.
 
-#### Insights
+#### Possible reasons:
 
-* λ ≈ 0.01–0.1 gives the best performance.
-* Moderate regularization helps prevent overfitting, especially with noisy real-world data.
+1. **The features are well-conditioned**: If the features don't cause multicollinearity or high variance in coefficients, regularization has little effect.
+2. **The data is not very noisy or high-dimensional**: In low-dimensional or clean data, regularization isn't very impactful.
+3. **Our training and test data distributions are very similar**, especially due to the fixed seed and random split.
 
 ---
 
