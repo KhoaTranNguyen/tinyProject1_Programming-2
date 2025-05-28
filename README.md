@@ -1,4 +1,15 @@
-# 🔢 Linear System Solver Library & CPU-Based Regression in C++
+# Linear System Solver Library & CPU-Based Regression in C++
+
+## Author
+
+**Phan Thành Hưng** 📧 [10423051@student.vgu.edu.vn](10423051@student.vgu.edu.vn])
+**Nguyễn Đức Khang** 📧 [10423054@student.vgu.edu.vn](10423054@student.vgu.edu.vn])
+**Lê Quang Minh Khoa** 📧 [10423057@student.vgu.edu.vn](10423057@student.vgu.edu.vn])
+**Trần Nguyên Khoa** 📧 [10423060@student.vgu.edu.vn](10423060@student.vgu.edu.vn])
+**Nguyễn Võ Minh Khôi** 📧 [10423060@student.vgu.edu.vn](10423063@student.vgu.edu.vn])
+**Dương Quý Trang** 📧 [10423060@student.vgu.edu.vn](10423110@student.vgu.edu.vn])
+
+---
 
 ## 📘 Overview
 
@@ -600,11 +611,3 @@ Expected output:
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 👨‍💼 Author
-
-**Khoa Tran Nguyen**
-🐙 [GitHub – khoatrannguyen](https://github.com/khoatrannguyen)
-📧 [hellokhoatrannguyen@gmail.com](mailto:hellokhoatrannguyen@gmail.com)
