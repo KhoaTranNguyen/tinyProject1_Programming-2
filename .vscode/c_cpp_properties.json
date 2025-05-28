@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/**",                    // If you manually installed Eigen
+        "C:/msys64/ucrt64/include/eigen3"     // If you used MSYS2 + UCRT64
+      ],
+      "defines": [],
+      "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
+  ],
+  "version": 4
+}
