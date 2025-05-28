@@ -51,7 +51,7 @@ int main() {
     Vector v2 = {4.0, 5.0, 6.0};
     Vector v_sum = v + v2;
     cout << "\nVector v2:\n" << v2;
-    cout << "\nVector sum v + v2:\n" << v_sum;
+    cout << "\nVector sum of v + v2:\n" << v_sum;
 
     // Vector dot product
     double dot = v * v2;
