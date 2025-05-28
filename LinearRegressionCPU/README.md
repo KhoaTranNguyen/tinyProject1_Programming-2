@@ -73,15 +73,17 @@ This project uses the [Eigen](https://eigen.tuxfamily.org/) library for linear a
 
    ```makefile
    CXX = g++
-   CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -IC:/msys64/ucrt64/include/eigen3
-
-   SRCS = cpu_prediction.cpp
-
-   cpu_prediction:
-       $(CXX) $(CXXFLAGS) $(SRCS) -o $@
-
+   CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -IC:/msys64/ucrt64/include/   eigen3
+   
+   SRC = cpu_prediction.cpp
+   TARGET = cpu_prediction
+   
+   $(TARGET): $(SRC)
+       $(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+   
    clean:
-       rm -f cpu_prediction
+       @echo "Cleaning up..."
+       -del /Q $(TARGET).exe 2>nul || rm -f $(TARGET)
    ```
 
 2. Build the executable:

@@ -378,6 +378,182 @@ Least Squares solution x:
 
 ---
 
+## 🧮 CPU-Based Linear Regression for Computer Hardware Performance Prediction
+
+This is a simple ridge-regularized linear regression model to predict performance metrics (e.g., PRP) of computer hardware based on multiple features. The implementation is CPU-only, using custom `Matrix`, `Vector`, and `LeastSquaresSystem` classes for linear algebra and least squares solving.
+
+---
+
+### 📁 Folder Structure
+
+```
+LinearRegression/
+├── dataset/
+│   └── computer+hardware/
+│       ├── Index
+│       ├── machine.data    # Dataset file with hardware features and target values.      
+│       └── machine.names
+└── cpu_prediction.cpp  # Main program to load dataset, train the ridge regression model, and evaluate performance.
+```
+
+---
+
+### Dataset Format
+
+The dataset `machine.data` is expected to have comma-separated values with the following columns:
+
+```csv
+Vendor, Model, Feature1, Feature2, Feature3, Feature4, Feature5, Feature6, TargetPRP
+```
+
+* Vendor and Model are strings (only used for skipping; not included in features).
+* Features are numeric values (6 columns).
+* TargetPRP is the numeric target variable for prediction.
+
+Example line:
+
+
+```csv
+adviser,32/60,125,256,6000,256,16,128,198
+```
+
+---
+
+### How It Works
+
+1. **Load Data** — Reads the dataset, skips the first two string columns (Vendor and Model), extracts 6 features and 1 target per sample.
+2. **Split Data** — Randomly splits data into 80% training and 20% testing sets.
+3. **Train Model** — Fits a ridge regression model (least squares with L2 regularization lambda=0.1) on the training data.
+4. **Predict & Evaluate** — Predicts targets on the test set and computes RMSE (Root Mean Square Error) as performance metric.
+
+---
+
+## 🛠️ Build & Run with Makefile (Windows / MSYS2)
+
+This project uses a `Makefile` for convenient compilation. It relies on the [Eigen](https://eigen.tuxfamily.org/) library for linear algebra operations.
+
+### 📦 Prerequisites
+
+You must have [MSYS2](https://www.msys2.org/) installed with the UCRT64 environment and the Eigen header-only library.
+
+#### Step-by-Step Installation on Windows:
+
+1. **Install MSYS2:**
+   [https://www.msys2.org/](https://www.msys2.org/)
+
+2. **Launch MSYS2 UCRT64 shell**
+
+3. **Update all packages:**
+
+   ```sh
+   pacman -Syu
+   ```
+
+4. **Install Eigen3:**
+
+   ```sh
+   pacman -S mingw-w64-ucrt-x86_64-eigen3
+   ```
+
+   This will install Eigen headers into:
+   `C:/msys64/ucrt64/include/eigen3`
+
+---
+
+### ⚙️ Using the Makefile
+
+Each test directory contains a Makefile. To build and run tests:
+
+#### Build 2 Linear System tests:
+
+```sh
+cd LinearSystem/Test
+make all
+```
+
+#### Run individual tests:
+
+```sh
+./test1.exe
+./test2.exe
+```
+
+#### Clean Build Artifacts
+
+```sh
+make clean
+```
+
+#### Do it the same with CPU Prediction:
+
+```sh
+cd LinearRegressionCPU/
+make cpu_prediction
+./cpu_prediction.exe
+```
+
+### 📁 Example Makefile
+
+```makefile
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -IC:/msys64/ucrt64/include/eigen3
+
+# You can add more test files here
+TESTS = test1 test2
+
+.PHONY: all clean $(TESTS)
+
+all: $(TESTS)
+
+$(TESTS):
+	$(CXX) $(CXXFLAGS) $@.cpp -o $@
+
+clean:
+	@echo "Cleaning up..."
+	-del /Q $(addsuffix .exe, $(TESTS)) 2>nul || rm -f $(TESTS)
+```
+
+Or for the CPU Prediction:
+
+```makefile
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -IC:/msys64/ucrt64/include/   eigen3
+
+SRC = cpu_prediction.cpp
+TARGET = cpu_prediction
+
+$(TARGET): $(SRC)
+    $(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+
+clean:
+    @echo "Cleaning up..."
+    -del /Q $(TARGET).exe 2>nul || rm -f $(TARGET)
+```
+
+Expected output:
+
+* All matrix, vector and linear system tests
+* Learned model parameters vector
+* Test RMSE error value
+
+---
+
+### Dependencies
+
+* C++17 or newer
+* Custom linear algebra classes: `Matrix`, `Vector`, and `LeastSquaresSystem`
+
+---
+
+### Notes
+
+* 📝 Ensure the Eigen include path matches your local MSYS2 installation (typically `C:/msys64/ucrt64/include/eigen3` for UCRT64 shell).
+* The program expects the dataset file at `dataset/computer+hardware/machine.data` relative to the executable.
+* The linear regression uses 1-based indexing in the `Matrix` and `Vector` classes.
+* Regularization parameter lambda is fixed at 0.1, but you can adjust it in `main()`.
+
+---
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
