@@ -74,6 +74,10 @@ void splitData(const std::vector<std::vector<double>>& features,
     std::vector<size_t> indices(N);
     for (size_t i = 0; i < N; ++i) indices[i] = i;
 
+    
+    // Use fixed seed for reproducibility
+    // int rd = 42;
+    // std::mt19937 g(rd); // <-- fixed seed
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(indices.begin(), indices.end(), g);
@@ -150,7 +154,9 @@ int main() {
     Matrix A = toMatrix(trainFeatures);
     Vector b = toVector(trainTargets);
 
-    LeastSquaresSystem lss(&A, &b, 0.1); // lambda = 0.1 for ridge regularization
+    double lambda;
+    cout << "Input lambda: "; cin >> lambda;
+    LeastSquaresSystem lss(&A, &b, lambda); // lambda = 0.1 for ridge regularization
     Vector x = lss.solve();
 
     std::cout << "Learned parameters (x):\n";
