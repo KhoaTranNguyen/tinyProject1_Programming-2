@@ -1,7 +1,7 @@
 // LinearSystem.hpp
 #pragma once
-#include "../Matrix/Matrix.hpp"
-#include "../Vector/Vector.hpp"
+#include "Matrix.hpp"
+#include "Vector.hpp"
 #include <stdexcept>
 
 class LinearSystem {
@@ -15,8 +15,13 @@ protected:
     LinearSystem& operator=(const LinearSystem&) = delete;
 
 public:
-    LinearSystem(Matrix* A, Vector* b);
+    LinearSystem(Matrix* A, Vector* b)
+    : mpA(A), mpb(b) {
+        if (A->rows() != A->cols()) throw std::invalid_argument("Matrix must be square");
+        if (A->rows() != b->size()) throw std::invalid_argument("Incompatible matrix/vector sizes");
+        mSize = A->rows();
+    }
     virtual ~LinearSystem() = default;
 
-    virtual Vector solve(); // Gaussian elimination
+    virtual Vector solve() {return mpA->solve(*mpb);}; // Gaussian elimination
 };
