@@ -64,6 +64,15 @@ Matrix::Matrix(const std::string& name, std::initializer_list<std::initializer_l
     if (debug) std::cout << "\n>> Constructor: Matrix " << mName << " (" << mNumRows << "x" << mNumCols << ")\n";
 }
 
+// Identity Matrix
+Matrix Matrix::identity(int size) {
+    Matrix I(size, size, "Identity");
+    for (int i = 1; i <= size; ++i) {
+        I(i, i) = 1.0;
+    }
+    return I;
+}
+
 // Copy constructor
 Matrix::Matrix(const Matrix& other)
     : mNumRows(other.mNumRows), mNumCols(other.mNumCols),
@@ -137,6 +146,15 @@ double Matrix::operator()(const int& row, const int& col) const {
 int Matrix::rows() const { return mNumRows; }
 int Matrix::cols() const { return mNumCols; }
 std::pair<int, int> Matrix::shape() const { return {mNumRows, mNumCols}; }
+bool Matrix::isSymmetric() const {
+    if (mNumRows != mNumCols) return false;
+    for (int i = 1; i <= mNumRows; ++i) {
+        for (int j = i + 1; j <= mNumCols; ++j) {
+            if (std::abs((*this)(i, j) - (*this)(j, i)) > 1e-9) return false;
+        }
+    }
+    return true;
+}
 
 // WARNING: Since C++17 has RVO and NRVO function, don't need to add debug scope for +, -, *
 // Addition
@@ -301,6 +319,24 @@ Matrix Matrix::pseudoinverse(double tolerance) const {
     Matrix result;
     result.fromEigen(A_pinv);
     return result;
+}
+
+// Conjugate
+Vector Matrix::conjugateGradient(const Vector& b) const {
+    Eigen::MatrixXd A_eigen = toEigen();
+    Eigen::VectorXd b_eigen = b.toEigen();
+    Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower|Eigen::Upper> solver;
+    solver.compute(A_eigen);
+    Eigen::VectorXd x = solver.solve(b_eigen);
+    return Vector(x);
+}
+
+// Ax = b
+Vector Matrix::solve(const Vector& b) const {
+    Eigen::MatrixXd A_eigen = toEigen(); // Assuming you have this
+    Eigen::VectorXd b_eigen = b.toEigen(); // Assuming you have this
+    Eigen::VectorXd x = A_eigen.colPivHouseholderQr().solve(b_eigen);
+    return Vector(x); // From Eigen::VectorXd back to your Vector
 }
 
 // Helper to convert to Eigen matrix

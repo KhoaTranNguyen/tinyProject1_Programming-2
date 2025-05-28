@@ -55,6 +55,24 @@ int Vector::size() const {
     return mSize;
 }
 
+// toEigen
+Vector::Vector(const Eigen::VectorXd& eigenVec)
+    : mSize(eigenVec.size()) {
+    mData = new double[mSize];
+    for (int i = 0; i < mSize; ++i) {
+        mData[i] = eigenVec(i);
+    }
+    if (debug) std::cout << "Eigen::VectorXd to Vector constructor called\n";
+}
+
+Eigen::VectorXd Vector::toEigen() const {
+    Eigen::VectorXd v(mSize);
+    for (int i = 0; i < mSize; ++i) {
+        v(i) = mData[i];
+    }
+    return v;
+}
+
 // Addition / Binary
 Vector Vector::operator+(const Vector& other) const {
     if (mSize != other.mSize) {

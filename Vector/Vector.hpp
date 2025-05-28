@@ -34,6 +34,10 @@ public:
     // Export mSize
     int size() const;
 
+    // toEigen
+    Vector(const Eigen::VectorXd& eigenVec);
+    Eigen::VectorXd toEigen() const;
+
     // Addition
     Vector operator+(const Vector& other) const;
 
