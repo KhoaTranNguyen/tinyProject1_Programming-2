@@ -380,11 +380,12 @@ Least Squares solution x:
 
 ## 📜 License
 
-\[Your license here]
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
 ## 👨‍💼 Author
 
-\[Khoa Tran Nguyen]
-\[GitHub/email/contact]
+**Khoa Tran Nguyen**
+🐙 [GitHub – khoatrannguyen](https://github.com/khoatrannguyen)
+📧 [hellokhoatrannguyen@gmail.com](mailto:hellokhoatrannguyen@gmail.com)
