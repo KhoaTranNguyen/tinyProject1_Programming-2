@@ -1,33 +1,50 @@
-# 🔢 Linear System Solver Library in C++
+# 🔢 Linear System Solver Library & CPU-Based Regression in C++
 
 ## 📘 Overview
 
-This lightweight C++ linear algebra library provides a clean, modular framework for solving systems of linear equations of the form **Ax = b**, leveraging numerical techniques including:
+This project provides a **modular C++ library** for solving linear systems and performing **linear regression** on real-world data, using only CPU-based computations. It consists of two key components:
 
-* **Gaussian elimination with pivoting**
-* **Conjugate Gradient** for symmetric positive definite systems
-* **Least Squares** for over/under-determined systems via:
+1. **Linear System Solver Library**
+   A clean and flexible implementation for solving linear systems of the form **Ax = b** using various numerical techniques:
 
-  * Moore-Penrose pseudo-inverse
-  * Tikhonov regularization
+   * Gaussian elimination with partial pivoting
+   * Conjugate Gradient method (for symmetric positive-definite matrices)
+   * Least Squares and Ridge Regression (via pseudo-inverse and Tikhonov regularization)
 
-Built with extensibility and C++ idioms in mind, this project is designed for educational and prototyping use.
+2. **CPU-Based Linear Regression for Hardware Performance Prediction**
+   A complete regression pipeline that:
+
+   * Loads and parses real-world CPU benchmark data (`machine.data`)
+   * Applies Ridge Regression using the solver library
+   * Evaluates predictions using RMSE
+
+Built in **C++17** using **Eigen** for numerical computations, this project is ideal for students and engineers interested in numerical methods, regression, and software prototyping.
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-LinearSystem/
-├── Test/
-│   ├── Makefile
-│   ├── test1.cpp           # Tests for Vector and Matrix classes
-│   └── test2.cpp           # Tests for solving linear systems
-├── Vector.hpp            
-├── Matrix.hpp            
-├── LinearSystem.hpp        # Base class using Gaussian elimination
-├── PosSymLinSystem.hpp     # Conjugate Gradient for symmetric systems
-└── LeastSquaresSystem.hpp  # Pseudoinverse and Tikhonov for LS systems
+ProjectRoot/
+├── LinearSystem/                      # 📦 Linear System Solver Library
+│   ├── Vector.hpp                    # Custom 1D vector class
+│   ├── Matrix.hpp                    # Custom 2D matrix class
+│   ├── LinearSystem.hpp              # Base class (Gaussian elimination)
+│   ├── PosSymLinSystem.hpp           # Conjugate Gradient solver
+│   ├── LeastSquaresSystem.hpp        # Ridge & Least Squares regression
+│   └── Test/
+│       ├── Makefile
+│       ├── test1.cpp                 # Matrix & vector operations
+│       └── test2.cpp                 # Solving example linear systems
+│
+└── LinearRegressionCPU/              # 📊 Ridge Regression with Real Dataset
+    ├── cpu_prediction.cpp            # Main program for training/prediction
+    ├── Makefile
+    └── dataset/
+        └── computer+hardware/
+            ├── Index
+            ├── machine.data          # Raw CPU performance dataset
+            └── machine.names         # Metadata for dataset
 ```
 
 ---
@@ -378,27 +395,11 @@ Least Squares solution x:
 
 ---
 
-## 🧮 CPU-Based Linear Regression for Computer Hardware Performance Prediction
+## 📈 CPU Hardware Performance Regression
 
-This is a simple ridge-regularized linear regression model to predict performance metrics (e.g., PRP) of computer hardware based on multiple features. The implementation is CPU-only, using custom `Matrix`, `Vector`, and `LeastSquaresSystem` classes for linear algebra and least squares solving.
+The `LinearRegressionCPU` directory demonstrates how to apply Ridge Regression on a real dataset.
 
----
-
-### 📁 Folder Structure
-
-```
-LinearRegression/
-├── dataset/
-│   └── computer+hardware/
-│       ├── Index
-│       ├── machine.data    # Dataset file with hardware features and target values.      
-│       └── machine.names
-└── cpu_prediction.cpp  # Main program to load dataset, train the ridge regression model, and evaluate performance.
-```
-
----
-
-### Dataset Format
+### Dataset: `machine.data`
 
 The dataset `machine.data` is expected to have comma-separated values with the following columns:
 
@@ -417,14 +418,34 @@ Example line:
 adviser,32/60,125,256,6000,256,16,128,198
 ```
 
+### Pipeline in `cpu_prediction.cpp`
+
+1. Loads and parses CSV data.
+2. Converts data into matrices `A` (features) and `b` (target).
+3. Constructs and solves a `LeastSquaresSystem`.
+4. Predicts outputs and computes RMSE.
+
 ---
 
-### How It Works
+### 📊 Results & Interpretation
 
-1. **Load Data** — Reads the dataset, skips the first two string columns (Vendor and Model), extracts 6 features and 1 target per sample.
-2. **Split Data** — Randomly splits data into 80% training and 20% testing sets.
-3. **Train Model** — Fits a ridge regression model (least squares with L2 regularization lambda=0.1) on the training data.
-4. **Predict & Evaluate** — Predicts targets on the test set and computes RMSE (Root Mean Square Error) as performance metric.
+#### RMSE vs Regularization (λ)
+
+| λ Value |  RMSE |
+| ------: | ----: |
+|    0.01 | 28.93 |
+|     0.1 | 28.96 |
+|     1.0 | 29.37 |
+|    10.0 | 35.29 |
+|   100.0 | 80.29 |
+
+* Lower RMSE indicates better generalization.
+* Very high λ over-regularizes the model, leading to poor fit.
+
+#### Insights
+
+* λ ≈ 0.01–0.1 gives the best performance.
+* Moderate regularization helps prevent overfitting, especially with noisy real-world data.
 
 ---
 
