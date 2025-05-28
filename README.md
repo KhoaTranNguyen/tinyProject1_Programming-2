@@ -395,6 +395,22 @@ Least Squares solution x:
 
 ---
 
+### 🧷 `cpu_prediction.cpp` – CPU Prediction Test
+
+```sh
+make cpu_prediction && ./cpu_prediction
+```
+
+**Output:**
+
+```go
+Learned parameters (x):
+-0.0311214 0.0148827 0.00422596 0.763087 -0.698535 1.22605
+Test RMSE: 54.0741
+```
+
+---
+
 ## 📈 CPU Hardware Performance Regression
 
 The `LinearRegressionCPU` directory demonstrates how to apply Ridge Regression on a real dataset.
