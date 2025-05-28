@@ -1,0 +1,8 @@
+# Ignore all .exe files in the test folder
+LinearSystem/Test/*.exe
+# Ignore all .dll files in the test folder
+LinearSystem/Test/*.dll
+# Ignore all .exe files anywhere
+*.exe
+# Ignore all .dll files anywhere
+*.dll
