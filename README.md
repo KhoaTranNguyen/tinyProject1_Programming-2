@@ -447,6 +447,8 @@ adviser,32/60,125,256,6000,256,16,128,198
 
 #### RMSE vs Regularization (λ)
 
+<div align="center">
+
 | λ Value |  RMSE |
 | ------: | ----: |
 |    0.01 | 28.93 |
@@ -454,6 +456,8 @@ adviser,32/60,125,256,6000,256,16,128,198
 |     1.0 | 29.37 |
 |    10.0 | 35.29 |
 |   100.0 | 80.29 |
+
+</div>
 
 * Lower RMSE indicates better generalization.
 * Very high λ over-regularizes the model, leading to poor fit.
@@ -501,7 +505,7 @@ You must have [MSYS2](https://www.msys2.org/) installed with the UCRT64 environm
 
 Each test directory contains a Makefile. To build and run tests:
 
-#### Build 2 Linear System tests:
+#### Build two Linear System tests:
 
 ```sh
 cd LinearSystem/Test
