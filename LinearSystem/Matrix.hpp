@@ -397,7 +397,7 @@ Matrix operator*(const double& scalar, const Matrix& mat) {
 
 Vector operator*(const Vector& vec, const Matrix& mat) {
     if (vec.size() != mat.rows()) {
-        throw std::runtime_error("Incompatible sizes for vector * matrix multiplication");
+        throw std::runtime_error("Incompatible sizes for vector * matrix multiplication.");
     }
     Vector result(mat.cols(), 0.0);  // Result is a row vector with size = mat.cols()
     for (int j = 0; j < mat.cols(); ++j) {
