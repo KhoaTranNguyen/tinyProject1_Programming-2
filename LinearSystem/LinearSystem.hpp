@@ -16,10 +16,9 @@ protected:
 
 public:
     LinearSystem(Matrix* A, Vector* b)
-    : mpA(A), mpb(b) {
-        if (A->rows() != A->cols()) throw std::invalid_argument("Matrix must be square");
-        if (A->rows() != b->size()) throw std::invalid_argument("Incompatible matrix/vector sizes");
-        mSize = A->rows();
+    :  mSize(A->rows()), mpA(A), mpb(b) {
+        if (A->rows() != b->size())
+            throw std::invalid_argument("Incompatible matrix/vector sizes");
     }
     virtual ~LinearSystem() = default;
 
