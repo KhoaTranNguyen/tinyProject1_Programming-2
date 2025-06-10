@@ -2,12 +2,12 @@
 
 ## Author
 
-- **Phan Thành Hưng** 📧 [10423051@student.vgu.edu.vn](mailto:10423051@student.vgu.edu.vn)  [Vector]
-- **Nguyễn Đức Khang** 📧 [10423054@student.vgu.edu.vn](mailto:10423054@student.vgu.edu.vn)  [LinearSystem]
-- **Lê Quang Minh Khoa** 📧 [10423057@student.vgu.edu.vn](mailto:10423057@student.vgu.edu.vn)  [LinearRegressionCPU]
-- **Trần Nguyên Khoa** 📧 [10423060@student.vgu.edu.vn](mailto:10423060@student.vgu.edu.vn)  [Matrix]
-- **Nguyễn Võ Minh Khôi** 📧 [10423063@student.vgu.edu.vn](mailto:10423063@student.vgu.edu.vn)  [LeastSquaresSystem]
-- **Dương Quý Trang** 📧 [10423110@student.vgu.edu.vn](mailto:10423110@student.vgu.edu.vn)  [LeastSquaresSystem]
+- **Nguyễn Võ Minh Khôi** 📧 [10423063@student.vgu.edu.vn](mailto:10423063@student.vgu.edu.vn)  [Part A.1 - Vector]
+- **Nguyễn Đức Khang** 📧 [10423054@student.vgu.edu.vn](mailto:10423054@student.vgu.edu.vn)  [Part A.2 - Matrix]
+- **Trần Nguyên Khoa** 📧 [10423060@student.vgu.edu.vn](mailto:10423060@student.vgu.edu.vn)  [Part A.2 - Matrix]
+- **Phan Thành Hưng** 📧 [10423051@student.vgu.edu.vn](mailto:10423051@student.vgu.edu.vn)  [Part A.3 - LinearSystem]
+- **Dương Quý Trang** 📧 [10423110@student.vgu.edu.vn](mailto:10423110@student.vgu.edu.vn)  [Part A.4 - LeastSquaresSystem]
+- **Lê Quang Minh Khoa** 📧 [10423057@student.vgu.edu.vn](mailto:10423057@student.vgu.edu.vn)  [Part B - LinearRegressionCPU]
 
 ---
 
