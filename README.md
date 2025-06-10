@@ -1,13 +1,45 @@
 # Linear System Solver Library & CPU-Based Regression in C++
 
-## Author
+## 📄 Role Titles (Short Summary)
 
-- **Nguyễn Võ Minh Khôi** 📧 [10423063@student.vgu.edu.vn](mailto:10423063@student.vgu.edu.vn)  [Part A.1 - Vector]
-- **Nguyễn Đức Khang** 📧 [10423054@student.vgu.edu.vn](mailto:10423054@student.vgu.edu.vn)  [Part A.2 - Matrix]
-- **Trần Nguyên Khoa** 📧 [10423060@student.vgu.edu.vn](mailto:10423060@student.vgu.edu.vn)  [Part A.2 - Matrix]
-- **Phan Thành Hưng** 📧 [10423051@student.vgu.edu.vn](mailto:10423051@student.vgu.edu.vn)  [Part A.3 - LinearSystem]
-- **Dương Quý Trang** 📧 [10423110@student.vgu.edu.vn](mailto:10423110@student.vgu.edu.vn)  [Part A.4 - LeastSquaresSystem]
-- **Lê Quang Minh Khoa** 📧 [10423057@student.vgu.edu.vn](mailto:10423057@student.vgu.edu.vn)  [Part B - LinearRegressionCPU]
+| ID | Person                         | Role Title                         |
+| ------ | ---------------------------------- | ---------------------------------- |
+| 10423063 | Nguyễn Võ Minh Khôi     | Vector Module Developer            |
+| 10423054 | Nguyễn Đức Khang     | Matrix Module Developer            |
+| 10423051 | Phan Thành Hưng     | Linear Solver Specialist           |
+| 10423110 | Dương Quý Trang     | Regression & Data Engineer         |
+| 10423057 | Lê Quang Minh Khoa     | Application & Evaluation Engineer  |
+| 10423060 | Trần Nguyên Khoa      | Codebase Integrator & Project Lead |
+
+---
+
+### 📄 Contribution
+
+**Nguyễn Võ Minh Khôi**
+
+* Developed core **Vector** functionality and related operations.
+
+**Nguyễn Đức Khang**
+
+* Implemented the **Matrix** class, including core linear algebra methods.
+
+**Phan Thành Hưng**
+
+* Designed and coded the **Gaussian Elimination algorithm with pivoting** and specialized solver for **Symmetric Positive Definite (SPD) Linear Systems**.
+
+**Dương Quý Trang**
+
+* Implemented **Least Squares Regression** and **Ridge Regression**, and developed **data preprocessing and preparation pipelines**.
+
+**Lê Quang Minh Khoa**
+
+* Applied regression models to **predict CPU-based hardware performance**; conducted **experiments with RMSE vs Regularization (λ)** to evaluate model performance.
+
+**Trần Nguyên Khoa**
+
+* Created and maintained the **Makefile** and testing infrastructure.
+* Served as the **Full Code Integrator**, merging all components and optimized **workflow and developer productivity**.
+* Authored the **project documentation** and provided **overall project coordination**.
 
 ---
 
