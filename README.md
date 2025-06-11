@@ -4,16 +4,22 @@
 
 | ID | Person                         | Role Title                         |
 | ------ | ---------------------------------- | ---------------------------------- |
+| 10423060 | Trần Nguyên Khoa      | Codebase Integrator & Project Lead |
 | 10423063 | Nguyễn Võ Minh Khôi     | Vector Module Developer            |
 | 10423054 | Nguyễn Đức Khang     | Matrix Module Developer            |
 | 10423051 | Phan Thành Hưng     | Linear Solver Specialist           |
 | 10423110 | Dương Quý Trang     | Regression & Data Engineer         |
 | 10423057 | Lê Quang Minh Khoa     | Application & Evaluation Engineer  |
-| 10423060 | Trần Nguyên Khoa      | Codebase Integrator & Project Lead |
 
 ---
 
 ### 📄 Contribution
+
+**Trần Nguyên Khoa**
+
+* Fixed and added realated functions to integrate the Vector and Matrix classes into Linear System classes (*i.e. merging all the components*).
+* Created and maintained the **Makefile** and testing infrastructure.
+* Authored the **full project documentation**
 
 **Nguyễn Võ Minh Khôi**
 
@@ -34,12 +40,6 @@
 **Lê Quang Minh Khoa**
 
 * Applied regression models to **predict CPU-based hardware performance**; conducted **experiments with RMSE vs Regularization (λ)** to evaluate model performance.
-
-**Trần Nguyên Khoa**
-
-* Created and maintained the **Makefile** and testing infrastructure.
-* Served as the **Full Code Integrator**, merging all components and optimized **workflow and developer productivity**.
-* Authored the **project documentation** and provided **overall project coordination**.
 
 ---
 
